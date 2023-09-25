@@ -10,8 +10,8 @@ class DelayModel:
     ):
         self._model = None  # Model should be saved in this attribute.
 
+    @staticmethod
     def preprocess(
-            self,
             data: pd.DataFrame,
             target_column: str = None
     ) -> Union[Tuple[pd.DataFrame, pd.DataFrame], pd.DataFrame]:
@@ -27,7 +27,12 @@ class DelayModel:
             or
             pd.DataFrame: features.
         """
-        return
+        if target_column is not None:
+            target = data[target_column]
+            data = data.drop(columns=[target_column])
+            return data, target
+        else:
+            return data
 
     def fit(
             self,
@@ -56,4 +61,7 @@ class DelayModel:
         Returns:
             (List[int]): predicted targets.
         """
-        return
+        if self._model is None:
+            raise ValueError("Model has not been trained yet.")
+        predictions = self._model.predict(features)
+        return predictions
